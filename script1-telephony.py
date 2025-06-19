@@ -33,12 +33,11 @@ class Assistant(Agent):
 async def entrypoint(ctx: agents.JobContext):
     session = AgentSession(
         stt=deepgram.STT(model="nova-3", language="multi"),
-        llm=openai.LLM.with_azure(
-            azure_deployment="gpt-4o",
-            azure_endpoint="https://azurellm-livekit.openai.azure.com/openai/deployments/gpt-4.1-mini/chat/completions?api-version=2025-01-01-preview",
-            api_key=os.getenv("AZURE_OPENAI_API_KEY"),
-            api_version=os.getenv("OPENAI_API_VERSION"),
-        ),
+        llm=openai.llm.LLM.with_cerebras(
+            model="llama3.1-8b",
+            temperature=0.8,
+            api_key=os.getenv("CEREBRAS_API_KEY")
+         ),
         tts=aws.TTS(
             voice="Kajal",
             language="en-IN",
