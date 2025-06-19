@@ -48,12 +48,12 @@ async def entrypoint(ctx: agents.JobContext):
             api_secret=os.getenv("AWS_SECRET_ACCESS_KEY"),
         ),
         vad=silero.VAD.load(
-                    min_speech_duration=0.05,  # 0.05,
-                    min_silence_duration=0.2,  # 0.55,
-                    prefix_padding_duration=0.2,  # 0.5,
-                    max_buffered_speech=60.0,  # 60.0,
-                    activation_threshold=0.2,  # 0.5,
-                    sample_rate=16000,
+            min_speech_duration=0.05,  # 0.05,
+            min_silence_duration=0.2,  # 0.55,
+            prefix_padding_duration=0.2,  # 0.5,
+            max_buffered_speech=60.0,  # 60.0,
+            activation_threshold=0.2,  # 0.5,
+            sample_rate=16000,
         ),
         # turn_detection=MultilingualModel(),
         min_endpointing_delay=0.1
