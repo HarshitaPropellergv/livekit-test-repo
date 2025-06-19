@@ -32,7 +32,16 @@ class Assistant(Agent):
 
 async def entrypoint(ctx: agents.JobContext):
     session = AgentSession(
-        stt=deepgram.STT(model="nova-3", language="en-In"),
+        stt=deepgram.stt.STT(
+            model= "nova-3",#env
+            interim_results=True,
+            smart_format=True,
+            punctuate=True,
+            filler_words=True,
+            profanity_filter=False,
+            language="en-IN",
+            # language="hi",
+        ),
         llm=openai.llm.LLM.with_cerebras(
             model="llama-4-scout-17b-16e-instruct",
             temperature=0.8,
@@ -53,7 +62,7 @@ async def entrypoint(ctx: agents.JobContext):
             min_silence_duration=0.2,  # 0.55,
             prefix_padding_duration=0.2,  # 0.5,
             max_buffered_speech=60.0,  # 60.0,
-            activation_threshold=0.2,  # 0.5,
+            activation_threshold=0.5,  # 0.5,
             sample_rate=16000,
         ),
         # turn_detection=MultilingualModel(),
