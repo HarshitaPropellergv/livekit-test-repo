@@ -9,7 +9,7 @@ from livekit.plugins import (
     noise_cancellation,
     silero,
 )
-from livekit.plugins.turn_detector.multilingual import MultilingualModel
+# from livekit.plugins.turn_detector.multilingual import MultilingualModel
 from livekit.plugins import aws
 import os
 from livekit.agents import metrics, MetricsCollectedEvent
@@ -48,7 +48,7 @@ async def entrypoint(ctx: agents.JobContext):
             api_secret=os.getenv("AWS_SECRET_ACCESS_KEY"),
         ),
         vad=silero.VAD.load(),
-        turn_detection=MultilingualModel(),
+        # turn_detection=MultilingualModel(),
         min_endpointing_delay=0.1
 
         )
