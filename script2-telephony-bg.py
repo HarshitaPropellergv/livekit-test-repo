@@ -7,6 +7,7 @@ from livekit.plugins import (
     deepgram,
     silero,
     aws,
+    sarvam
 )
 # from livekit.plugins.turn_detector.multilingual import MultilingualModel # Re-enable for robust turn detection
 import os
@@ -52,20 +53,18 @@ async def entrypoint(ctx: agents.JobContext):
             profanity_filter=False,
             language="en-IN",
         ),
-        llm=openai.llm.LLM.with_cerebras(
-            model="llama-4-scout-17b-16e-instruct",
-            temperature=0.8,
-            api_key=os.getenv("CEREBRAS_API_KEY")
+        llm=openai.LLM.with_azure(
+            azure_deployment="gpt-4.1-mini",
+            azure_endpoint="https://azurellm-livekit.openai.azure.com/openai/deployments/gpt-4.1-mini/chat/completions?api-version=2025-01-01-preview",
+            api_key=os.getenv("AZURE_OPENAI_API_KEY"),
+            api_version=os.getenv("OPENAI_API_VERSION"),
+            # api_key=openai_api_key
         ),
-        tts=aws.TTS(
-            voice="Kajal",
-            language="en-IN",
-            speech_engine="neural",
-            sample_rate=16000,
-            region="ap-south-1",
-            api_key=os.getenv("AWS_ACCESS_KEY_ID"),
-            api_secret=os.getenv("AWS_SECRET_ACCESS_KEY"),
-        ),
+        tts=sarvam.TTS(
+            target_language_code="en-IN",
+            speaker="anushka",
+            api_key=os.getenv("SARVAM_API_KEY")
+            ),
         vad=silero.VAD.load(
             min_speech_duration=0.05,
             min_silence_duration=0.2,
@@ -104,7 +103,7 @@ async def entrypoint(ctx: agents.JobContext):
         room=ctx.room,
         agent=agent,
         room_input_options=RoomInputOptions(
-            # noise_cancellation=noise_cancellation.BVC(), # Uncomment if needed
+            noise_cancellation=noise_cancellation.BVC(), # Uncomment if needed
         ),
     )
     await background_audio.start(room=ctx.room,agent_session=session)
@@ -160,7 +159,8 @@ async def entrypoint(ctx: agents.JobContext):
     # --- CRITICAL: Ensure graceful shutdown of the entire agent task ---
     # This ensures the entrypoint waits until the LiveKit room is disconnected,
     # allowing all internal components (including BackgroundAudioPlayer) to clean up gracefully.
-    ctx.shutdown()
+    # ctx.shutdown()
+    await session
  
  
 if __name__ == "__main__":
