@@ -9,13 +9,14 @@ from livekit.plugins import (
     aws,
     sarvam
 )
-# from livekit.plugins.turn_detector.multilingual import MultilingualModel # Re-enable for robust turn detection
+from livekit.plugins.turn_detector.multilingual import MultilingualModel # Re-enable for robust turn detection
 import os
 import asyncio
 import logging
 from livekit.agents import metrics, MetricsCollectedEvent
 from time import perf_counter
 import datetime
+from livekit.plugins import noise_cancellation
  
 # --- Import LiveKit's BackgroundAudioPlayer as per your example ---
 from livekit.agents import BackgroundAudioPlayer,BuiltinAudioClip,AudioConfig
@@ -73,7 +74,7 @@ async def entrypoint(ctx: agents.JobContext):
             activation_threshold=0.5,
             sample_rate=16000,
         ),
-        # turn_detection=MultilingualModel(), # Re-enable for robust turn detection
+        turn_detection=MultilingualModel(), # Re-enable for robust turn detection
  
         min_endpointing_delay=0.1,
  
@@ -159,8 +160,8 @@ async def entrypoint(ctx: agents.JobContext):
     # --- CRITICAL: Ensure graceful shutdown of the entire agent task ---
     # This ensures the entrypoint waits until the LiveKit room is disconnected,
     # allowing all internal components (including BackgroundAudioPlayer) to clean up gracefully.
-    # ctx.shutdown()
-    await session
+    ctx.shutdown()
+
  
  
 if __name__ == "__main__":
