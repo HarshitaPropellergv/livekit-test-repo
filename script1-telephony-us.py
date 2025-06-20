@@ -1,3 +1,4 @@
+#base code with cerebras,aws,deepgram config configured for us vm
 from dotenv import load_dotenv
 
 from livekit import agents

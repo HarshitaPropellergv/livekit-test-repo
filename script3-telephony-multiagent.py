@@ -1,8 +1,8 @@
-#script with built in backgroundAudioplayer method that plays builtin audio : used this approach to solve the InvalidState - failed to capture frame issue that was arising during interruption where agent continues speaking and didn't get interrupted
+#script containing multi class/agent
 from dotenv import load_dotenv
  
 from livekit import agents, api, rtc
-from livekit.agents import AgentSession, Agent, RoomInputOptions, AutoSubscribe
+from livekit.agents import AgentSession, Agent, RoomInputOptions, AutoSubscribe,RunContext
 from livekit.plugins import (
     openai,
     deepgram,
@@ -32,21 +32,39 @@ agent_name = "test-agent"
 outbound_trunk_id = os.getenv("SIP_OUTBOUND_TRUNK_ID")
  
 load_dotenv(dotenv_path=".env.local")
- 
+
+# @dataclass
+# class UserData:
+#     """stores data and agent to be shared across the session"""
+    
+
 class Assistant(Agent):
     def __init__(self) -> None:
         super().__init__(instructions="You are a helpful voice AI assistant for a call center. Respond concisely and professionally.")
         self.participant: rtc.RemoteParticipant | None = None
-        self.conversation_finished = conversation_finished.__get__(self,self.__class__)
+        
     def set_participant(self, participant: rtc.RemoteParticipant):
         self.participant = participant
 
+class Toolcaller(Assistant):
+    def __init__(self) -> None:
+            super().__init__(
+                instructions="your work is to call appropriate tool as per the situation",
+                # stt=deepgram.STT(),
+                llm=openai.LLM(model="gpt-4.1"),
+                # tts=aws.TTS(),
+                # vad=silero.VAD.load()
+            )
+            self.conversation_finished = conversation_finished.__get__(self,self.__class__)
+        
     @function_tool
     async def end_call(self):
         """1)(when the user intends to end the conversation ) call this function. 2)when the conversation comes to end call this function example: bye, goodbye,thats it, I don't want to talk anymore, """
 
         await self.conversation_finished()
         return f"Call ending now."
+
+    #----some other function tools---------
 
     
  
@@ -55,7 +73,7 @@ async def entrypoint(ctx: agents.JobContext):
     # background_audio = BackgroundAudioPlayer(
     #     ambient_sound_source="cafe_noise.wav" # Use your actual path for ambient sound
     # )
- 
+    
     session = AgentSession(
         stt=deepgram.stt.STT(
             model="nova-3",
@@ -110,7 +128,15 @@ async def entrypoint(ctx: agents.JobContext):
     agent = Assistant()
  
     await ctx.connect(auto_subscribe=AutoSubscribe.AUDIO_ONLY)
- 
+    # userdata = UserData(ctx)
+
+    # userdata.agents.update(
+    #     {
+    #         "assistant": Assistant(),
+    #         "toolcaller": Toolcaller(),
+    #     }
+    # )
+
     user_identity = "phone_user"
     phone_number = ctx.job.metadata
  

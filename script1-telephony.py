@@ -1,3 +1,4 @@
+#base code with crebras, aws(india),deepgram config
 from dotenv import load_dotenv
 
 from livekit import agents

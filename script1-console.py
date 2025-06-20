@@ -1,3 +1,4 @@
+#console code
 from dotenv import load_dotenv
 
 from livekit import agents
@@ -41,6 +42,7 @@ async def entrypoint(ctx: agents.JobContext):
         ),
         vad=silero.VAD.load(),
         turn_detection=MultilingualModel(),
+        min_endpointing_delay=0.1
         )
 
     await session.start(
