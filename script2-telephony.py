@@ -53,7 +53,7 @@ async def entrypoint(ctx: agents.JobContext):
             language="en-IN",
             speech_engine="neural",
             sample_rate= 16000,#env
-            region="us-east-1" ,#env
+            region="ap-south-1" ,#env
             api_key=os.getenv("AWS_ACCESS_KEY_ID"),
             api_secret=os.getenv("AWS_SECRET_ACCESS_KEY"),
         ),
