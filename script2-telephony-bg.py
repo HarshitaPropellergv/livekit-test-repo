@@ -37,16 +37,16 @@ class Assistant(Agent):
     def __init__(self) -> None:
         super().__init__(instructions="You are a helpful voice AI assistant for a call center. Respond concisely and professionally.")
         self.participant: rtc.RemoteParticipant | None = None
-        self.conversation_finished = conversation_finished.__get__(self,self.__class__)
+        # self.conversation_finished = conversation_finished.__get__(self,self.__class__)
     def set_participant(self, participant: rtc.RemoteParticipant):
         self.participant = participant
 
-    @function_tool
-    async def end_call(self):
-        """1)(when the user intends to end the conversation ) call this function. 2)when the conversation comes to end call this function example: bye, goodbye,thats it, I don't want to talk anymore, """
+    # @function_tool
+    # async def end_call(self):
+    #     """1)(when the user intends to end the conversation ) call this function. 2)when the conversation comes to end call this function example: bye, goodbye,thats it, I don't want to talk anymore, """
 
-        await self.conversation_finished()
-        return f"Call ending now."
+    #     await self.conversation_finished()
+    #     return f"Call ending now."
 
     
  
